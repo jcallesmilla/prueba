@@ -306,6 +306,11 @@ public class BookController {
         for (Book libro : autor.getLibros()) {
             copias.add(libro.copiar());
         }
+
+        // --- CAMBIO A ASCENDENTE por ISBN ---
+        copias.sort((libro1, libro2) -> libro1.getIsbn().compareTo(libro2.getIsbn()));
+        // --- FIN DE CAMBIO ---
+
         return new Response<>(Status.OK, "Libros del autor listados.", copias);
     }
 
@@ -316,6 +321,11 @@ public class BookController {
                 copias.add(libro.copiar());
             }
         }
+
+        // --- CAMBIO A ASCENDENTE por ISBN ---
+        copias.sort((libro1, libro2) -> libro1.getIsbn().compareTo(libro2.getIsbn()));
+        // --- FIN DE CAMBIO ---
+        
         return new Response<>(Status.OK, "Libros filtrados por formato.", copias);
     }
 

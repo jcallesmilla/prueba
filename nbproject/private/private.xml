@@ -4,6 +4,16 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/boths/OneDrive/Documents/NetBeansProjects/MegaferiaGUI/src/main/Main.java</file>
+            <file>file:/C:/Users/boths/OneDrive/Documents/NetBeansProjects/MegaferiaGUI/src/core/controller/util/Status.java</file>
+            <file>file:/C:/Users/boths/OneDrive/Documents/NetBeansProjects/MegaferiaGUI/src/core/controller/util/Response.java</file>
+            <file>file:/C:/Users/boths/OneDrive/Documents/NetBeansProjects/MegaferiaGUI/src/core/controller/BookController.java</file>
+            <file>file:/C:/Users/boths/OneDrive/Documents/NetBeansProjects/MegaferiaGUI/src/core/controller/CompraController.java</file>
+            <file>file:/C:/Users/boths/OneDrive/Documents/NetBeansProjects/MegaferiaGUI/src/core/controller/PersonController.java</file>
+            <file>file:/C:/Users/boths/OneDrive/Documents/NetBeansProjects/MegaferiaGUI/src/core/controller/PublisherController.java</file>
+            <file>file:/C:/Users/boths/OneDrive/Documents/NetBeansProjects/MegaferiaGUI/src/core/controller/StandController.java</file>
+            <file>file:/C:/Users/boths/OneDrive/Documents/NetBeansProjects/MegaferiaGUI/src/core/view/MegaferiaFrame.java</file>
+            <file>file:/C:/Users/boths/OneDrive/Documents/NetBeansProjects/MegaferiaGUI/src/core/model/Stand.java</file>
+            <file>file:/C:/Users/boths/OneDrive/Documents/NetBeansProjects/MegaferiaGUI/src/core/model/Publisher.java</file>
         </group>
     </open-files>
 </project-private>
