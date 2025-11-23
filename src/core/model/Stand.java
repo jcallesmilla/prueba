@@ -44,11 +44,23 @@ public class Stand {
 
     public Stand copiar() {
         Stand copia = new Stand(this.id, this.precio);
-        List<Publisher> copias = new ArrayList<>();
-        for (Publisher editorial : this.editoriales) {
-            copias.add(editorial.copiar());
+        // NO copiar las editoriales para evitar ciclo infinito
+        // Solo copiar información básica de las editoriales
+        List<Publisher> copiasEditoriales = new ArrayList<>();
+        if (this.editoriales != null) {
+            for (Publisher editorial : this.editoriales) {
+                // Crear una copia superficial solo con datos básicos
+                Publisher copiaEditorial = new Publisher(
+                    editorial.getNit(), 
+                    editorial.getNombre(), 
+                    editorial.getDireccion(), 
+                    null // No copiar gerente para evitar complejidad
+                );
+                // NO copiar los stands de la editorial (evita el ciclo)
+                copiasEditoriales.add(copiaEditorial);
+            }
         }
-        copia.setEditoriales(copias);
+        copia.setEditoriales(copiasEditoriales);
         return copia;
     }
 }

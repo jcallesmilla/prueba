@@ -74,20 +74,37 @@ public class Publisher {
 
     public Publisher copiar() {
         Publisher copia = new Publisher(this.nit, this.nombre, this.direccion, null);
+        
+        // Copiar gerente
         if (this.gerente != null) {
-            Manager gerenteCopia = new Manager(this.gerente.getId(), this.gerente.getNombres(), this.gerente.getApellidos());
+            Manager gerenteCopia = new Manager(
+                this.gerente.getId(), 
+                this.gerente.getNombres(), 
+                this.gerente.getApellidos()
+            );
             copia.setGerente(gerenteCopia);
         }
+        
+        // Copiar stands (solo datos básicos, SIN editoriales para evitar ciclo)
         List<Stand> copiasStands = new ArrayList<>();
-        for (Stand stand : this.stands) {
-            copiasStands.add(stand.copiar());
+        if (this.stands != null) {
+            for (Stand stand : this.stands) {
+                Stand copiaStand = new Stand(stand.getId(), stand.getPrecio());
+                // NO copiar las editoriales del stand (evita el ciclo)
+                copiasStands.add(copiaStand);
+            }
         }
         copia.setStands(copiasStands);
+        
+        // Copiar libros (ya está bien implementado)
         List<Book> copiasLibros = new ArrayList<>();
-        for (Book libro : this.libros) {
-            copiasLibros.add(libro.copiar());
+        if (this.libros != null) {
+            for (Book libro : this.libros) {
+                copiasLibros.add(libro.copiar());
+            }
         }
         copia.setLibros(copiasLibros);
+        
         return copia;
     }
 }

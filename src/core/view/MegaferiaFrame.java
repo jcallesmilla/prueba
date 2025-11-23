@@ -26,11 +26,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author jjlora
- * @author edangulo
- */
+
 public class MegaferiaFrame extends javax.swing.JFrame implements Observer {
 
     private final StandController standController;
@@ -47,9 +43,7 @@ public class MegaferiaFrame extends javax.swing.JFrame implements Observer {
     private List<String> standsSeleccionados;
     private List<String> editorialesSeleccionadas;
     
-    /**
-     * Creates new form MegaferiaFrame
-     */
+
     public MegaferiaFrame(StandController standController, PersonController personController, PublisherController publisherController,
             BookController bookController, CompraController compraController, StandStorage standStorage,
             PersonStorage personStorage, PublisherStorage publisherStorage, BookStorage bookStorage) {
@@ -136,26 +130,29 @@ public class MegaferiaFrame extends javax.swing.JFrame implements Observer {
     }
 
     private void cargarEditorialesEnCombo() {
-        Response<List<Publisher>> respuesta = publisherController.obtenerEditoriales();
-        jComboBox5.removeAllItems();
-        jComboBox8.removeAllItems();
-        if (respuesta.getCodigo() == Status.OK && respuesta.getDato() != null) {
-            for (Publisher editorial : respuesta.getDato()) {
-                String texto = editorial.getNombre() + " (" + editorial.getNit() + ")";
-                jComboBox5.addItem(texto);
-                jComboBox8.addItem(texto);
-            }
+         Response<List<Publisher>> respuesta = publisherController.obtenerEditoriales();
+    jComboBox5.removeAllItems();
+    jComboBox8.removeAllItems();
+    jComboBox5.addItem("Seleccione uno..."); // AGREGAR ESTA LÍNEA
+    jComboBox8.addItem("Seleccione uno..."); // AGREGAR ESTA LÍNEA
+    if (respuesta.getCodigo() == Status.OK && respuesta.getDato() != null) {
+        for (Publisher editorial : respuesta.getDato()) {
+            String texto = editorial.getNombre() + " (" + editorial.getNit() + ")";
+            jComboBox5.addItem(texto);
+            jComboBox8.addItem(texto);
         }
+    }
     }
 
     private void cargarStandsEnCombo() {
-        Response<List<Stand>> respuesta = standController.obtenerStands();
-        jComboBox7.removeAllItems();
-        if (respuesta.getCodigo() == Status.OK && respuesta.getDato() != null) {
-            for (Stand stand : respuesta.getDato()) {
-                jComboBox7.addItem(String.valueOf(stand.getId()));
-            }
+         Response<List<Stand>> respuesta = standController.obtenerStands();
+    jComboBox7.removeAllItems();
+    jComboBox7.addItem("Seleccione uno..."); // AGREGAR ESTA LÍNEA
+    if (respuesta.getCodigo() == Status.OK && respuesta.getDato() != null) {
+        for (Stand stand : respuesta.getDato()) {
+            jComboBox7.addItem(String.valueOf(stand.getId()));
         }
+    }
     }
 
     private void cargarTablaEditoriales() {
@@ -1766,17 +1763,23 @@ public class MegaferiaFrame extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
-        if (jComboBox7.getItemCount() == 0) {
-            JOptionPane.showMessageDialog(this, "No hay stands registrados.");
-            return;
-        }
-        String stand = jComboBox7.getItemAt(jComboBox7.getSelectedIndex());
-        Response<List<String>> respuesta = compraController.agregarStandALista(standsSeleccionados, stand);
-        if (respuesta.getCodigo() != Status.OK) {
-            JOptionPane.showMessageDialog(this, respuesta.getMensaje());
-        }
-        standsSeleccionados = respuesta.getDato();
-        mostrarListaEnArea(standsSeleccionados, jTextArea3);
+           if (jComboBox7.getItemCount() == 0) {
+        JOptionPane.showMessageDialog(this, "No hay stands registrados.");
+        return;
+    }
+    // CORRECCIÓN: Asegurarse de que no sea "Seleccione uno..."
+    if (jComboBox7.getSelectedIndex() == 0 || jComboBox7.getSelectedIndex() == -1) {
+        JOptionPane.showMessageDialog(this, "Debes seleccionar un stand válido.");
+        return;
+    }
+    
+    String stand = jComboBox7.getItemAt(jComboBox7.getSelectedIndex());
+    Response<List<String>> respuesta = compraController.agregarStandALista(standsSeleccionados, stand);
+    if (respuesta.getCodigo() != Status.OK) {
+        JOptionPane.showMessageDialog(this, respuesta.getMensaje());
+    }
+    standsSeleccionados = respuesta.getDato();
+    mostrarListaEnArea(standsSeleccionados, jTextArea3);
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
@@ -1791,16 +1794,22 @@ public class MegaferiaFrame extends javax.swing.JFrame implements Observer {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         if (jComboBox8.getItemCount() == 0) {
-            JOptionPane.showMessageDialog(this, "No hay editoriales registradas.");
-            return;
-        }
-        String publisher = jComboBox8.getItemAt(jComboBox8.getSelectedIndex());
-        Response<List<String>> respuesta = compraController.agregarEditorialALista(editorialesSeleccionadas, publisher);
-        if (respuesta.getCodigo() != Status.OK) {
-            JOptionPane.showMessageDialog(this, respuesta.getMensaje());
-        }
-        editorialesSeleccionadas = respuesta.getDato();
-        mostrarListaEnArea(editorialesSeleccionadas, jTextArea1);
+        JOptionPane.showMessageDialog(this, "No hay editoriales registradas.");
+        return;
+    }
+    // CORRECCIÓN: Asegurarse de que no sea "Seleccione uno..."
+    if (jComboBox8.getSelectedIndex() == 0 || jComboBox8.getSelectedIndex() == -1) {
+        JOptionPane.showMessageDialog(this, "Debes seleccionar una editorial válida.");
+        return;
+    }
+    
+    String publisher = jComboBox8.getItemAt(jComboBox8.getSelectedIndex());
+    Response<List<String>> respuesta = compraController.agregarEditorialALista(editorialesSeleccionadas, publisher);
+    if (respuesta.getCodigo() != Status.OK) {
+        JOptionPane.showMessageDialog(this, respuesta.getMensaje());
+    }
+    editorialesSeleccionadas = respuesta.getDato();
+    mostrarListaEnArea(editorialesSeleccionadas, jTextArea1);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
@@ -1814,14 +1823,23 @@ public class MegaferiaFrame extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        Response<String> respuesta = compraController.comprarStands(standsSeleccionados, editorialesSeleccionadas);
-        JOptionPane.showMessageDialog(this, respuesta.getMensaje());
-        if (respuesta.getCodigo() == Status.OK) {
-            standsSeleccionados = new ArrayList<>();
-            editorialesSeleccionadas = new ArrayList<>();
-            jTextArea1.setText("");
-            jTextArea3.setText("");
-        }
+            // AGREGAR DEBUGGING
+    System.out.println("Stands seleccionados: " + standsSeleccionados);
+    System.out.println("Editoriales seleccionadas: " + editorialesSeleccionadas);
+    
+    Response<String> respuesta = compraController.comprarStands(standsSeleccionados, editorialesSeleccionadas);
+    
+    // AGREGAR DEBUGGING
+    System.out.println("Código de respuesta: " + respuesta.getCodigo());
+    System.out.println("Mensaje: " + respuesta.getMensaje());
+    
+    JOptionPane.showMessageDialog(this, respuesta.getMensaje());
+    if (respuesta.getCodigo() == Status.OK) {
+        standsSeleccionados = new ArrayList<>();
+        editorialesSeleccionadas = new ArrayList<>();
+        jTextArea1.setText("");
+        jTextArea3.setText("");
+    }
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
