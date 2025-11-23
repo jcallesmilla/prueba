@@ -8,15 +8,26 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-
+/**
+ * Repositorio para editoriales.
+ * Patrón Singleton para garantizar una única instancia.
+ */
 public class PublisherStorage implements Subject {
 
+    private static PublisherStorage instance = null;
     private final List<Publisher> editoriales;
     private final List<Observer> observadores;
 
-    public PublisherStorage() {
+    private PublisherStorage() {
         this.editoriales = new ArrayList<>();
         this.observadores = new ArrayList<>();
+    }
+
+    public static synchronized PublisherStorage getInstance() {
+        if (instance == null) {
+            instance = new PublisherStorage();
+        }
+        return instance;
     }
 
     public boolean existeNit(String nit) {

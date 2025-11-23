@@ -10,15 +10,24 @@ import java.util.List;
 
 /**
  * Repositorio para libros de cualquier formato.
+ * Patrón Singleton para garantizar una única instancia.
  */
 public class BookStorage implements Subject {
 
+    private static BookStorage instance = null;
     private final List<Book> libros;
     private final List<Observer> observadores;
 
-    public BookStorage() {
+    private BookStorage() {
         this.libros = new ArrayList<>();
         this.observadores = new ArrayList<>();
+    }
+
+    public static synchronized BookStorage getInstance() {
+        if (instance == null) {
+            instance = new BookStorage();
+        }
+        return instance;
     }
 
     public boolean existeIsbn(String isbn) {

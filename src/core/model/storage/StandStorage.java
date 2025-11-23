@@ -8,15 +8,26 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-
+/**
+ * Repositorio para stands.
+ * Patrón Singleton para garantizar una única instancia.
+ */
 public class StandStorage implements Subject {
 
+    private static StandStorage instance = null;
     private final List<Stand> stands;
     private final List<Observer> observadores;
 
-    public StandStorage() {
+    private StandStorage() {
         this.stands = new ArrayList<>();
         this.observadores = new ArrayList<>();
+    }
+
+    public static synchronized StandStorage getInstance() {
+        if (instance == null) {
+            instance = new StandStorage();
+        }
+        return instance;
     }
 
     public boolean existeId(long id) {

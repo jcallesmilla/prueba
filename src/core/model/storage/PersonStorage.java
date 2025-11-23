@@ -11,18 +11,30 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Repositorio para personas.
+ * Patrón Singleton para garantizar una única instancia.
+ */
 public class PersonStorage implements Subject {
 
+    private static PersonStorage instance = null;
     private final List<Author> autores;
     private final List<Manager> gerentes;
     private final List<Narrator> narradores;
     private final List<Observer> observadores;
 
-    public PersonStorage() {
+    private PersonStorage() {
         this.autores = new ArrayList<>();
         this.gerentes = new ArrayList<>();
         this.narradores = new ArrayList<>();
         this.observadores = new ArrayList<>();
+    }
+
+    public static synchronized PersonStorage getInstance() {
+        if (instance == null) {
+            instance = new PersonStorage();
+        }
+        return instance;
     }
 
     public boolean existeId(long id) {

@@ -13,7 +13,6 @@ import core.model.storage.PublisherStorage;
 import core.model.storage.StandStorage;
 import javax.swing.UIManager;
 
-
 public class Main {
 
     public static void main(String[] args) {
@@ -24,10 +23,10 @@ public class Main {
             System.err.println("No se pudo iniciar el tema visual");
         }
 
-        StandStorage standStorage = new StandStorage();
-        PersonStorage personStorage = new PersonStorage();
-        PublisherStorage publisherStorage= new PublisherStorage();
-        BookStorage bookStorage = new BookStorage();
+        StandStorage standStorage = StandStorage.getInstance();
+        PersonStorage personStorage = PersonStorage.getInstance();
+        PublisherStorage publisherStorage = PublisherStorage.getInstance();
+        BookStorage bookStorage = BookStorage.getInstance();
 
         StandController standController = new StandController(standStorage);
         PersonController personController = new PersonController(personStorage);
@@ -35,7 +34,8 @@ public class Main {
         BookController bookController = new BookController(bookStorage, personStorage, publisherStorage);
         CompraController compraController = new CompraController(standStorage, publisherStorage);
 
-        MegaferiaFrame frame = new MegaferiaFrame(standController, personController, publisherController, bookController, compraController,
+        MegaferiaFrame frame = new MegaferiaFrame(standController, personController, publisherController,
+                bookController, compraController,
                 standStorage, personStorage, publisherStorage, bookStorage);
         frame.setVisible(true);
     }
