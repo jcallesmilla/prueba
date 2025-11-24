@@ -24,6 +24,10 @@ public class Manager extends Person implements IManager {
         this.editorial = editorial;
     }
 
+    protected IManager crearCopiaSimple() {
+        return new Manager(this.id, this.nombres, this.apellidos);
+    }
+
     @Override
     public IManager copiar() {
         Manager copia = new Manager(this.id, this.nombres, this.apellidos);

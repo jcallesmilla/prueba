@@ -27,6 +27,10 @@ public class Narrator extends Person implements INarrator {
         this.audiolibros = audiolibros;
     }
 
+    protected INarrator crearCopiaSimple() {
+        return new Narrator(this.id, this.nombres, this.apellidos);
+    }
+
     @Override
     public INarrator copiar() {
         Narrator copia = new Narrator(this.id, this.nombres, this.apellidos);

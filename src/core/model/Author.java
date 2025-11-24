@@ -27,6 +27,10 @@ public class Author extends Person implements IAuthor {
         this.libros = libros;
     }
 
+    protected IAuthor crearCopiaSimple() {
+        return new Author(this.id, this.nombres, this.apellidos);
+    }
+
     @Override
     public IAuthor copiar() {
         Author copia = new Author(this.id, this.nombres, this.apellidos);

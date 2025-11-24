@@ -109,5 +109,13 @@ public abstract class Book implements IBook {
         return copia;
     }
 
+    protected IAuthor crearAutorSimple(IAuthor original) {
+        return new Author(original.getId(), original.getNombres(), original.getApellidos());
+    }
+
+    protected IManager crearGerenteSimple(IManager original) {
+        return new Manager(original.getId(), original.getNombres(), original.getApellidos());
+    }
+
     public abstract IBook copiar();
 }
