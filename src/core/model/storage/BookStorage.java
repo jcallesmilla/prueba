@@ -1,6 +1,6 @@
 package core.model.storage;
 
-import core.model.Book;
+import core.model.interfaces.IBook;
 import core.observer.Observer;
 import core.observer.Subject;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.List;
 public class BookStorage implements Subject {
 
     private static BookStorage instance = null;
-    private final List<Book> libros;
+    private final List<IBook> libros;
     private final List<Observer> observadores;
 
     private BookStorage() {
@@ -31,7 +31,7 @@ public class BookStorage implements Subject {
     }
 
     public boolean existeIsbn(String isbn) {
-        for (Book libro : libros) {
+        for (IBook libro : libros) {
             if (libro.getIsbn().equals(isbn)) {
                 return true;
             }
@@ -39,19 +39,19 @@ public class BookStorage implements Subject {
         return false;
     }
 
-    public void guardar(Book libro) {
+    public void guardar(IBook libro) {
         this.libros.add(libro);
         notifyObservers();
     }
 
-    public List<Book> obtenerOrdenados() {
-        List<Book> copia = new ArrayList<>(libros);
-        Collections.sort(copia, Comparator.comparing(Book::getIsbn));
+    public List<IBook> obtenerOrdenados() {
+        List<IBook> copia = new ArrayList<>(libros);
+        Collections.sort(copia, Comparator.comparing(IBook::getIsbn));
         return copia;
     }
 
-    public Book buscarPorIsbn(String isbn) {
-        for (Book libro : libros) {
+    public IBook buscarPorIsbn(String isbn) {
+        for (IBook libro : libros) {
             if (libro.getIsbn().equals(isbn)) {
                 return libro;
             }

@@ -1,6 +1,6 @@
 package core.model.storage;
 
-import core.model.Stand;
+import core.model.interfaces.IStand;
 import core.observer.Observer;
 import core.observer.Subject;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.List;
 public class StandStorage implements Subject {
 
     private static StandStorage instance = null;
-    private final List<Stand> stands;
+    private final List<IStand> stands;
     private final List<Observer> observadores;
 
     private StandStorage() {
@@ -31,7 +31,7 @@ public class StandStorage implements Subject {
     }
 
     public boolean existeId(long id) {
-        for (Stand stand : stands) {
+        for (IStand stand : stands) {
             if (stand.getId() == id) {
                 return true;
             }
@@ -39,13 +39,13 @@ public class StandStorage implements Subject {
         return false;
     }
 
-    public void guardar(Stand stand) {
+    public void guardar(IStand stand) {
         this.stands.add(stand);
         notifyObservers();
     }
 
-    public Stand buscarPorId(long id) {
-        for (Stand stand : stands) {
+    public IStand buscarPorId(long id) {
+        for (IStand stand : stands) {
             if (stand.getId() == id) {
                 return stand;
             }
@@ -53,9 +53,9 @@ public class StandStorage implements Subject {
         return null;
     }
 
-    public List<Stand> obtenerOrdenados() {
-        List<Stand> copia = new ArrayList<>(stands);
-        Collections.sort(copia, Comparator.comparingLong(Stand::getId));
+    public List<IStand> obtenerOrdenados() {
+        List<IStand> copia = new ArrayList<>(stands);
+        Collections.sort(copia, Comparator.comparingLong(IStand::getId));
         return copia;
     }
 

@@ -1,6 +1,6 @@
 package core.model.storage;
 
-import core.model.Publisher;
+import core.model.interfaces.IPublisher;
 import core.observer.Observer;
 import core.observer.Subject;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.List;
 public class PublisherStorage implements Subject {
 
     private static PublisherStorage instance = null;
-    private final List<Publisher> editoriales;
+    private final List<IPublisher> editoriales;
     private final List<Observer> observadores;
 
     private PublisherStorage() {
@@ -31,7 +31,7 @@ public class PublisherStorage implements Subject {
     }
 
     public boolean existeNit(String nit) {
-        for (Publisher editorial : editoriales) {
+        for (IPublisher editorial : editoriales) {
             if (editorial.getNit().equals(nit)) {
                 return true;
             }
@@ -39,13 +39,13 @@ public class PublisherStorage implements Subject {
         return false;
     }
 
-    public void guardar(Publisher editorial) {
+    public void guardar(IPublisher editorial) {
         this.editoriales.add(editorial);
         notifyObservers();
     }
 
-    public Publisher buscarPorNit(String nit) {
-        for (Publisher editorial : editoriales) {
+    public IPublisher buscarPorNit(String nit) {
+        for (IPublisher editorial : editoriales) {
             if (editorial.getNit().equals(nit)) {
                 return editorial;
             }
@@ -53,9 +53,13 @@ public class PublisherStorage implements Subject {
         return null;
     }
 
-    public List<Publisher> obtenerOrdenados() {
-        List<Publisher> copia = new ArrayList<>(editoriales);
-        Collections.sort(copia, Comparator.comparing(Publisher::getNit));
+    public List<IPublisher> obtenerTodas() {
+        return new ArrayList<>(editoriales);
+    }
+
+    public List<IPublisher> obtenerOrdenadasPorNit() {
+        List<IPublisher> copia = new ArrayList<>(editoriales);
+        Collections.sort(copia, Comparator.comparing(IPublisher::getNit));
         return copia;
     }
 

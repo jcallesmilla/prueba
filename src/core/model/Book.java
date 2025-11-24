@@ -1,22 +1,27 @@
 package core.model;
 
+import core.model.interfaces.IAuthor;
+import core.model.interfaces.IBook;
+import core.model.interfaces.IPublisher;
+import core.model.interfaces.IManager;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Clase base para los libros.
  */
-public abstract class Book {
+public abstract class Book implements IBook {
 
     protected String titulo;
-    protected List<Author> autores;
+    protected List<IAuthor> autores;
     protected String isbn;
     protected String genero;
     protected String formato;
     protected double valor;
-    protected Publisher editorial;
+    protected IPublisher editorial;
 
-    public Book(String titulo, List<Author> autores, String isbn, String genero, String formato, double valor, Publisher editorial) {
+    public Book(String titulo, List<IAuthor> autores, String isbn, String genero, String formato, double valor,
+            IPublisher editorial) {
         this.titulo = titulo;
         this.autores = autores;
         this.isbn = isbn;
@@ -34,11 +39,11 @@ public abstract class Book {
         this.titulo = titulo;
     }
 
-    public List<Author> getAutores() {
+    public List<IAuthor> getAutores() {
         return autores;
     }
 
-    public void setAutores(List<Author> autores) {
+    public void setAutores(List<IAuthor> autores) {
         this.autores = autores;
     }
 
@@ -74,34 +79,35 @@ public abstract class Book {
         this.valor = valor;
     }
 
-    public Publisher getEditorial() {
+    public IPublisher getEditorial() {
         return editorial;
     }
 
-    public void setEditorial(Publisher editorial) {
+    public void setEditorial(IPublisher editorial) {
         this.editorial = editorial;
     }
 
-    protected List<Author> copiarAutores() {
-        List<Author> copiasAutores = new ArrayList<>();
-        for (Author autor : this.autores) {
-            Author autorCopia = new Author(autor.getId(), autor.getNombres(), autor.getApellidos());
+    protected List<IAuthor> copiarAutores() {
+        List<IAuthor> copiasAutores = new ArrayList<>();
+        for (IAuthor autor : this.autores) {
+            IAuthor autorCopia = new Author(autor.getId(), autor.getNombres(), autor.getApellidos());
             copiasAutores.add(autorCopia);
         }
         return copiasAutores;
     }
 
-    protected Publisher copiarEditorial() {
+    protected IPublisher copiarEditorial() {
         if (this.editorial == null) {
             return null;
         }
-        Publisher copia = new Publisher(this.editorial.getNit(), this.editorial.getNombre(), this.editorial.getDireccion(), null);
+        IPublisher copia = new Publisher(this.editorial.getNit(), this.editorial.getNombre(),
+                this.editorial.getDireccion(), null);
         if (this.editorial.getGerente() != null) {
-            Manager gerente = this.editorial.getGerente();
+            IManager gerente = this.editorial.getGerente();
             copia.setGerente(new Manager(gerente.getId(), gerente.getNombres(), gerente.getApellidos()));
         }
         return copia;
     }
 
-    public abstract Book copiar();
+    public abstract IBook copiar();
 }

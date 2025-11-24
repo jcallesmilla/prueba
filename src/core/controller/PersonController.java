@@ -3,7 +3,10 @@ package core.controller;
 import core.model.Author;
 import core.model.Manager;
 import core.model.Narrator;
-import core.model.Person;
+import core.model.interfaces.IAuthor;
+import core.model.interfaces.IManager;
+import core.model.interfaces.INarrator;
+import core.model.interfaces.IPerson;
 import core.model.storage.PersonStorage;
 import core.controller.util.Response;
 import core.controller.util.Status;
@@ -35,7 +38,7 @@ public class PersonController {
         return nombres != null && apellidos != null && !nombres.isEmpty() && !apellidos.isEmpty();
     }
 
-    public Response<Author> crearAutor(String idTexto, String nombres, String apellidos) {
+    public Response<IAuthor> crearAutor(String idTexto, String nombres, String apellidos) {
         if (!camposNombreValidos(nombres, apellidos) || idTexto == null || idTexto.isEmpty()) {
             return new Response<>(Status.BAD_REQUEST, "Todos los campos del autor son obligatorios.");
         }
@@ -47,12 +50,12 @@ public class PersonController {
         if (personStorage.existeId(id)) {
             return new Response<>(Status.BAD_REQUEST, "Ya existe una persona con ese ID.");
         }
-        Author autor = new Author(id, nombres, apellidos);
+        IAuthor autor = new Author(id, nombres, apellidos);
         personStorage.guardarAutor(autor);
         return new Response<>(Status.CREATED, "Autor creado correctamente.", autor);
     }
 
-    public Response<Manager> crearGerente(String idTexto, String nombres, String apellidos) {
+    public Response<IManager> crearGerente(String idTexto, String nombres, String apellidos) {
         if (!camposNombreValidos(nombres, apellidos) || idTexto == null || idTexto.isEmpty()) {
             return new Response<>(Status.BAD_REQUEST, "Todos los campos del gerente son obligatorios.");
         }
@@ -64,12 +67,12 @@ public class PersonController {
         if (personStorage.existeId(id)) {
             return new Response<>(Status.BAD_REQUEST, "Ya existe una persona con ese ID.");
         }
-        Manager gerente = new Manager(id, nombres, apellidos);
+        IManager gerente = new Manager(id, nombres, apellidos);
         personStorage.guardarGerente(gerente);
         return new Response<>(Status.CREATED, "Gerente creado correctamente.", gerente);
     }
 
-    public Response<Narrator> crearNarrador(String idTexto, String nombres, String apellidos) {
+    public Response<INarrator> crearNarrador(String idTexto, String nombres, String apellidos) {
         if (!camposNombreValidos(nombres, apellidos) || idTexto == null || idTexto.isEmpty()) {
             return new Response<>(Status.BAD_REQUEST, "Todos los campos del narrador son obligatorios.");
         }
@@ -81,52 +84,52 @@ public class PersonController {
         if (personStorage.existeId(id)) {
             return new Response<>(Status.BAD_REQUEST, "Ya existe una persona con ese ID.");
         }
-        Narrator narrador = new Narrator(id, nombres, apellidos);
+        INarrator narrador = new Narrator(id, nombres, apellidos);
         personStorage.guardarNarrador(narrador);
         return new Response<>(Status.CREATED, "Narrador creado correctamente.", narrador);
     }
 
-    public Response<List<Author>> obtenerAutores() {
-        List<Author> copias = new ArrayList<>();
-        for (Author autor : personStorage.obtenerAutoresOrdenados()) {
-            copias.add(autor.copiar());
+    public Response<List<IAuthor>> obtenerAutores() {
+        List<IAuthor> copias = new ArrayList<>();
+        for (IAuthor autor : personStorage.obtenerAutoresOrdenados()) {
+            copias.add((IAuthor) autor.copiar());
         }
         return new Response<>(Status.OK, "Autores listados.", copias);
     }
 
-    public Response<List<Manager>> obtenerGerentes() {
-        List<Manager> copias = new ArrayList<>();
-        for (Manager gerente : personStorage.obtenerGerentesOrdenados()) {
-            copias.add(gerente.copiar());
+    public Response<List<IManager>> obtenerGerentes() {
+        List<IManager> copias = new ArrayList<>();
+        for (IManager gerente : personStorage.obtenerGerentesOrdenados()) {
+            copias.add((IManager) gerente.copiar());
         }
         return new Response<>(Status.OK, "Gerentes listados.", copias);
     }
 
-    public Response<List<Narrator>> obtenerNarradores() {
-        List<Narrator> copias = new ArrayList<>();
-        for (Narrator narrador : personStorage.obtenerNarradoresOrdenados()) {
-            copias.add(narrador.copiar());
+    public Response<List<INarrator>> obtenerNarradores() {
+        List<INarrator> copias = new ArrayList<>();
+        for (INarrator narrador : personStorage.obtenerNarradoresOrdenados()) {
+            copias.add((INarrator) narrador.copiar());
         }
         return new Response<>(Status.OK, "Narradores listados.", copias);
     }
 
-    public Response<List<Person>> obtenerTodasLasPersonas() {
-        List<Person> copias = new ArrayList<>();
-        for (Person persona : personStorage.obtenerTodasLasPersonasOrdenadas()) {
+    public Response<List<IPerson>> obtenerTodasLasPersonas() {
+        List<IPerson> copias = new ArrayList<>();
+        for (IPerson persona : personStorage.obtenerTodasLasPersonasOrdenadas()) {
             copias.add(persona.copiar());
         }
         return new Response<>(Status.OK, "Personas listadas.", copias);
     }
 
-    public Author buscarAutorPorId(long id) {
+    public IAuthor buscarAutorPorId(long id) {
         return personStorage.buscarAutor(id);
     }
 
-    public Manager buscarGerentePorId(long id) {
+    public IManager buscarGerentePorId(long id) {
         return personStorage.buscarGerente(id);
     }
 
-    public Narrator buscarNarradorPorId(long id) {
+    public INarrator buscarNarradorPorId(long id) {
         return personStorage.buscarNarrador(id);
     }
 }

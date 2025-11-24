@@ -1,33 +1,37 @@
 package core.model;
 
+import core.model.interfaces.IAuthor;
+import core.model.interfaces.IBook;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Representa a un autor.
  */
-public class Author extends Person {
+public class Author extends Person implements IAuthor {
 
-    private List<Book> libros;
+    private List<IBook> libros;
 
     public Author(long id, String nombres, String apellidos) {
         super(id, nombres, apellidos);
         this.libros = new ArrayList<>();
     }
 
-    public List<Book> getLibros() {
+    @Override
+    public List<IBook> getLibros() {
         return libros;
     }
 
-    public void setLibros(List<Book> libros) {
+    @Override
+    public void setLibros(List<IBook> libros) {
         this.libros = libros;
     }
 
     @Override
-    public Author copiar() {
+    public IAuthor copiar() {
         Author copia = new Author(this.id, this.nombres, this.apellidos);
-        List<Book> copiasLibros = new ArrayList<>();
-        for (Book libro : this.libros) {
+        List<IBook> copiasLibros = new ArrayList<>();
+        for (IBook libro : this.libros) {
             copiasLibros.add(libro.copiar());
         }
         copia.setLibros(copiasLibros);

@@ -1,12 +1,15 @@
 package core.controller;
 
-import core.model.Author;
 import core.model.Audiobook;
-import core.model.Book;
 import core.model.DigitalBook;
-import core.model.Narrator;
 import core.model.PrintedBook;
-import core.model.Publisher;
+import core.model.interfaces.IAudiobook;
+import core.model.interfaces.IAuthor;
+import core.model.interfaces.IBook;
+import core.model.interfaces.IDigitalBook;
+import core.model.interfaces.INarrator;
+import core.model.interfaces.IPublisher;
+import core.model.interfaces.IPrintedBook;
 import core.model.storage.BookStorage;
 import core.model.storage.PersonStorage;
 import core.model.storage.PublisherStorage;
@@ -101,8 +104,8 @@ public class BookController {
         return Double.parseDouble(valorTexto);
     }
 
-    private List<Author> convertirAutores(List<String> autoresTexto) {
-        List<Author> autores = new ArrayList<>();
+    private List<IAuthor> convertirAutores(List<String> autoresTexto) {
+        List<IAuthor> autores = new ArrayList<>();
         for (String linea : autoresTexto) {
             if (linea == null || linea.isEmpty()) {
                 continue;
@@ -113,7 +116,7 @@ public class BookController {
             }
             try {
                 long id = Long.parseLong(partes[0]);
-                Author autor = personStorage.buscarAutor(id);
+                IAuthor autor = personStorage.buscarAutor(id);
                 if (autor != null) {
                     autores.add(autor);
                 }
@@ -124,16 +127,16 @@ public class BookController {
         return autores;
     }
 
-    private Response<List<Author>> validarAutores(List<String> autoresTexto) {
+    private Response<List<IAuthor>> validarAutores(List<String> autoresTexto) {
         if (autoresTexto == null || autoresTexto.isEmpty()) {
             return new Response<>(Status.BAD_REQUEST, "Debes agregar al menos un autor.");
         }
-        List<Author> autores = convertirAutores(autoresTexto);
+        List<IAuthor> autores = convertirAutores(autoresTexto);
         if (autores.isEmpty()) {
             return new Response<>(Status.NOT_FOUND, "Los autores seleccionados no existen.");
         }
         Set<Long> ids = new HashSet<>();
-        for (Author autor : autores) {
+        for (IAuthor autor : autores) {
             if (ids.contains(autor.getId())) {
                 return new Response<>(Status.BAD_REQUEST, "No se permiten autores repetidos en el libro.");
             }
@@ -142,7 +145,7 @@ public class BookController {
         return new Response<>(Status.OK, "Autores validados.", autores);
     }
 
-    private Publisher obtenerEditorialDesdeCombo(String textoEditorial) {
+    private IPublisher obtenerEditorialDesdeCombo(String textoEditorial) {
         if (textoEditorial == null || textoEditorial.isEmpty()) {
             return null;
         }
@@ -153,9 +156,9 @@ public class BookController {
         return publisherStorage.buscarPorNit(nit);
     }
 
-    public Response<Book> crearLibroImpreso(String titulo, List<String> autoresTexto, String isbn, String genero,
+    public Response<IBook> crearLibroImpreso(String titulo, List<String> autoresTexto, String isbn, String genero,
             String formato, String valorTexto, String textoEditorial, String paginasTexto, String copiasTexto) {
-        Response<List<Author>> validacionAutores = validarAutores(autoresTexto);
+        Response<List<IAuthor>> validacionAutores = validarAutores(autoresTexto);
         if (validacionAutores.getCodigo() != Status.OK) {
             return new Response<>(validacionAutores.getCodigo(), validacionAutores.getMensaje());
         }
@@ -185,21 +188,21 @@ public class BookController {
         if (paginas <= 0 || copias <= 0) {
             return new Response<>(Status.BAD_REQUEST, "Páginas y copias deben ser mayores que 0.");
         }
-        Publisher editorial = obtenerEditorialDesdeCombo(textoEditorial);
+        IPublisher editorial = obtenerEditorialDesdeCombo(textoEditorial);
         if (editorial == null) {
             return new Response<>(Status.NOT_FOUND, "La editorial seleccionada no existe.");
         }
         double valor = convertirValor(valorTexto);
-        List<Author> autores = validacionAutores.getDato();
-        PrintedBook libro = new PrintedBook(titulo, autores, isbn, genero, formato, valor, editorial, paginas, copias);
+        List<IAuthor> autores = validacionAutores.getDato();
+        IPrintedBook libro = new PrintedBook(titulo, autores, isbn, genero, formato, valor, editorial, paginas, copias);
         registrarRelaciones(libro, autores, editorial, null);
         bookStorage.guardar(libro);
         return new Response<>(Status.CREATED, "Libro impreso creado correctamente.", libro);
     }
 
-    public Response<Book> crearLibroDigital(String titulo, List<String> autoresTexto, String isbn, String genero,
+    public Response<IBook> crearLibroDigital(String titulo, List<String> autoresTexto, String isbn, String genero,
             String formato, String valorTexto, String textoEditorial, String enlace) {
-        Response<List<Author>> validacionAutores = validarAutores(autoresTexto);
+        Response<List<IAuthor>> validacionAutores = validarAutores(autoresTexto);
         if (validacionAutores.getCodigo() != Status.OK) {
             return new Response<>(validacionAutores.getCodigo(), validacionAutores.getMensaje());
         }
@@ -217,21 +220,21 @@ public class BookController {
         if (bookStorage.existeIsbn(isbn)) {
             return new Response<>(Status.BAD_REQUEST, "Ya existe un libro con ese ISBN.");
         }
-        Publisher editorial = obtenerEditorialDesdeCombo(textoEditorial);
+        IPublisher editorial = obtenerEditorialDesdeCombo(textoEditorial);
         if (editorial == null) {
             return new Response<>(Status.NOT_FOUND, "La editorial seleccionada no existe.");
         }
         double valor = convertirValor(valorTexto);
-        List<Author> autores = validacionAutores.getDato();
-        DigitalBook libro = new DigitalBook(titulo, autores, isbn, genero, formato, valor, editorial, enlace);
+        List<IAuthor> autores = validacionAutores.getDato();
+        IDigitalBook libro = new DigitalBook(titulo, autores, isbn, genero, formato, valor, editorial, enlace);
         registrarRelaciones(libro, autores, editorial, null);
         bookStorage.guardar(libro);
         return new Response<>(Status.CREATED, "Libro digital creado correctamente.", libro);
     }
 
-    public Response<Book> crearAudiolibro(String titulo, List<String> autoresTexto, String isbn, String genero,
+    public Response<IBook> crearAudiolibro(String titulo, List<String> autoresTexto, String isbn, String genero,
             String formato, String valorTexto, String textoEditorial, String duracionTexto, String idNarradorTexto) {
-        Response<List<Author>> validacionAutores = validarAutores(autoresTexto);
+        Response<List<IAuthor>> validacionAutores = validarAutores(autoresTexto);
         if (validacionAutores.getCodigo() != Status.OK) {
             return new Response<>(validacionAutores.getCodigo(), validacionAutores.getMensaje());
         }
@@ -259,7 +262,7 @@ public class BookController {
         if (duracion <= 0) {
             return new Response<>(Status.BAD_REQUEST, "La duración debe ser mayor que 0.");
         }
-        Publisher editorial = obtenerEditorialDesdeCombo(textoEditorial);
+        IPublisher editorial = obtenerEditorialDesdeCombo(textoEditorial);
         if (editorial == null) {
             return new Response<>(Status.NOT_FOUND, "La editorial seleccionada no existe.");
         }
@@ -269,59 +272,59 @@ public class BookController {
         } catch (NumberFormatException e) {
             return new Response<>(Status.BAD_REQUEST, "El narrador debe tener un ID numérico.");
         }
-        Narrator narrador = personStorage.buscarNarrador(idNarrador);
+        INarrator narrador = personStorage.buscarNarrador(idNarrador);
         if (narrador == null) {
             return new Response<>(Status.NOT_FOUND, "El narrador seleccionado no existe.");
         }
         double valor = convertirValor(valorTexto);
-        List<Author> autores = validacionAutores.getDato();
-        Audiobook libro = new Audiobook(titulo, autores, isbn, genero, formato, valor, editorial, duracion, narrador);
+        List<IAuthor> autores = validacionAutores.getDato();
+        IAudiobook libro = new Audiobook(titulo, autores, isbn, genero, formato, valor, editorial, duracion, narrador);
         registrarRelaciones(libro, autores, editorial, narrador);
         bookStorage.guardar(libro);
         return new Response<>(Status.CREATED, "Audiolibro creado correctamente.", libro);
     }
 
-    private void registrarRelaciones(Book libro, List<Author> autores, Publisher editorial, Narrator narrador) {
-        for (Author autor : autores) {
-            List<Book> librosAutor = autor.getLibros();
+    private void registrarRelaciones(IBook libro, List<IAuthor> autores, IPublisher editorial, INarrator narrador) {
+        for (IAuthor autor : autores) {
+            List<IBook> librosAutor = autor.getLibros();
             librosAutor.add(libro);
             autor.setLibros(librosAutor);
         }
-        List<Book> librosEditorial = editorial.getLibros();
+        List<IBook> librosEditorial = editorial.getLibros();
         librosEditorial.add(libro);
         editorial.setLibros(librosEditorial);
         if (narrador != null) {
-            List<Book> librosNarrador = narrador.getAudiolibros();
+            List<IBook> librosNarrador = narrador.getAudiolibros();
             librosNarrador.add(libro);
             narrador.setAudiolibros(librosNarrador);
         }
     }
 
-    public Response<List<Book>> obtenerLibros() {
-        List<Book> copias = new ArrayList<>();
-        for (Book libro : bookStorage.obtenerOrdenados()) {
+    public Response<List<IBook>> obtenerLibros() {
+        List<IBook> copias = new ArrayList<>();
+        for (IBook libro : bookStorage.obtenerOrdenados()) {
             copias.add(libro.copiar());
         }
         return new Response<>(Status.OK, "Libros listados.", copias);
     }
 
-    public Response<List<Book>> obtenerLibrosPorAutor(long idAutor) {
-        Author autor = personStorage.buscarAutor(idAutor);
+    public Response<List<IBook>> obtenerLibrosPorAutor(long idAutor) {
+        IAuthor autor = personStorage.buscarAutor(idAutor);
         if (autor == null) {
             return new Response<>(Status.NOT_FOUND, "El autor no existe.");
         }
-        List<Book> copias = new ArrayList<>();
-        for (Book libro : autor.getLibros()) {
+        List<IBook> copias = new ArrayList<>();
+        for (IBook libro : autor.getLibros()) {
             copias.add(libro.copiar());
         }
         // Ordenar por ISBN
-        copias.sort(Comparator.comparing(Book::getIsbn));
+        copias.sort(Comparator.comparing(IBook::getIsbn));
         return new Response<>(Status.OK, "Libros del autor listados.", copias);
     }
 
-    public Response<List<Book>> obtenerLibrosPorFormato(String formato) {
-        List<Book> copias = new ArrayList<>();
-        for (Book libro : bookStorage.obtenerOrdenados()) {
+    public Response<List<IBook>> obtenerLibrosPorFormato(String formato) {
+        List<IBook> copias = new ArrayList<>();
+        for (IBook libro : bookStorage.obtenerOrdenados()) {
             if (libro.getFormato().equals(formato)) {
                 copias.add(libro.copiar());
             }
@@ -329,13 +332,13 @@ public class BookController {
         return new Response<>(Status.OK, "Libros filtrados por formato.", copias);
     }
 
-    public Response<List<Author>> autoresConMasEditoriales() {
-        List<Author> autores = personStorage.obtenerAutoresOrdenados();
+    public Response<List<IAuthor>> autoresConMasEditoriales() {
+        List<IAuthor> autores = personStorage.obtenerAutoresOrdenados();
         int maximo = -1;
-        List<Author> resultado = new ArrayList<>();
-        for (Author autor : autores) {
+        List<IAuthor> resultado = new ArrayList<>();
+        for (IAuthor autor : autores) {
             Set<String> editoriales = new HashSet<>();
-            for (Book libro : autor.getLibros()) {
+            for (IBook libro : autor.getLibros()) {
                 if (libro.getEditorial() != null) {
                     editoriales.add(libro.getEditorial().getNit());
                 }
@@ -348,9 +351,9 @@ public class BookController {
                 resultado.add(autor);
             }
         }
-        List<Author> copias = new ArrayList<>();
-        for (Author autor : resultado) {
-            copias.add(autor.copiar());
+        List<IAuthor> copias = new ArrayList<>();
+        for (IAuthor autor : resultado) {
+            copias.add((IAuthor) autor.copiar());
         }
         return new Response<>(Status.OK, "Autores con más editoriales listados.", copias);
     }

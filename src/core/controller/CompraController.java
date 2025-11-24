@@ -1,7 +1,7 @@
 package core.controller;
 
-import core.model.Publisher;
-import core.model.Stand;
+import core.model.interfaces.IPublisher;
+import core.model.interfaces.IStand;
 import core.model.storage.PublisherStorage;
 import core.model.storage.StandStorage;
 import core.controller.util.Response;
@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 
 public class CompraController {
 
@@ -63,7 +62,7 @@ public class CompraController {
             return new Response<>(Status.BAD_REQUEST, "Debes seleccionar al menos un stand y una editorial.");
         }
         Set<Long> idsSinRepetir = new HashSet<>();
-        List<Stand> stands = new ArrayList<>();
+        List<IStand> stands = new ArrayList<>();
         for (String idTexto : idsStands) {
             try {
                 long id = Long.parseLong(idTexto);
@@ -71,7 +70,7 @@ public class CompraController {
                     return new Response<>(Status.BAD_REQUEST, "Hay stands repetidos en la compra.");
                 }
                 idsSinRepetir.add(id);
-                Stand stand = standStorage.buscarPorId(id);
+                IStand stand = standStorage.buscarPorId(id);
                 if (stand == null) {
                     return new Response<>(Status.NOT_FOUND, "El stand con ID " + id + " no existe.");
                 }
@@ -80,7 +79,7 @@ public class CompraController {
                 return new Response<>(Status.BAD_REQUEST, "Los IDs de stands deben ser numéricos.");
             }
         }
-        List<Publisher> editoriales = new ArrayList<>();
+        List<IPublisher> editoriales = new ArrayList<>();
         Set<String> nits = new HashSet<>();
         for (String texto : editorialesTexto) {
             String nit = texto.contains("(") ? texto.substring(texto.indexOf("(") + 1, texto.indexOf(")")) : texto;
@@ -88,19 +87,19 @@ public class CompraController {
                 return new Response<>(Status.BAD_REQUEST, "Hay editoriales repetidas en la compra.");
             }
             nits.add(nit);
-            Publisher editorial = publisherStorage.buscarPorNit(nit);
+            IPublisher editorial = publisherStorage.buscarPorNit(nit);
             if (editorial == null) {
                 return new Response<>(Status.NOT_FOUND, "La editorial con NIT " + nit + " no existe.");
             }
             editoriales.add(editorial);
         }
-        for (Stand stand : stands) {
-            List<Publisher> actuales = stand.getEditoriales();
-            for (Publisher editorial : editoriales) {
+        for (IStand stand : stands) {
+            List<IPublisher> actuales = stand.getEditoriales();
+            for (IPublisher editorial : editoriales) {
                 if (!actuales.contains(editorial)) {
                     actuales.add(editorial);
                 }
-                List<Stand> standsEditorial = editorial.getStands();
+                List<IStand> standsEditorial = editorial.getStands();
                 if (!standsEditorial.contains(stand)) {
                     standsEditorial.add(stand);
                 }

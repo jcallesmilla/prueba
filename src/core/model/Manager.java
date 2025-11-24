@@ -3,24 +3,29 @@ package core.model;
 /**
  * Representa a un gerente.
  */
-public class Manager extends Person {
+import core.model.interfaces.IManager;
+import core.model.interfaces.IPublisher;
 
-    private Publisher editorial;
+public class Manager extends Person implements IManager {
+
+    private IPublisher editorial;
 
     public Manager(long id, String nombres, String apellidos) {
         super(id, nombres, apellidos);
     }
 
-    public Publisher getEditorial() {
+    @Override
+    public IPublisher getEditorial() {
         return editorial;
     }
 
-    public void setEditorial(Publisher editorial) {
+    @Override
+    public void setEditorial(IPublisher editorial) {
         this.editorial = editorial;
     }
 
     @Override
-    public Manager copiar() {
+    public IManager copiar() {
         Manager copia = new Manager(this.id, this.nombres, this.apellidos);
         if (this.editorial != null) {
             copia.setEditorial(this.editorial.copiar());

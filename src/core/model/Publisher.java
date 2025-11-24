@@ -1,21 +1,25 @@
 package core.model;
 
+import core.model.interfaces.IPublisher;
+import core.model.interfaces.IManager;
+import core.model.interfaces.IStand;
+import core.model.interfaces.IBook;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Representa una editorial.
  */
-public class Publisher {
+public class Publisher implements IPublisher {
 
     private String nit;
     private String nombre;
     private String direccion;
-    private Manager gerente;
-    private List<Stand> stands;
-    private List<Book> libros;
+    private IManager gerente;
+    private List<IStand> stands;
+    private List<IBook> libros;
 
-    public Publisher(String nit, String nombre, String direccion, Manager gerente) {
+    public Publisher(String nit, String nombre, String direccion, IManager gerente) {
         this.nit = nit;
         this.nombre = nombre;
         this.direccion = direccion;
@@ -24,87 +28,99 @@ public class Publisher {
         this.libros = new ArrayList<>();
     }
 
+    @Override
     public String getNit() {
         return nit;
     }
 
+    @Override
     public void setNit(String nit) {
         this.nit = nit;
     }
 
+    @Override
     public String getNombre() {
         return nombre;
     }
 
+    @Override
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
+    @Override
     public String getDireccion() {
         return direccion;
     }
 
+    @Override
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
 
-    public Manager getGerente() {
+    @Override
+    public IManager getGerente() {
         return gerente;
     }
 
-    public void setGerente(Manager gerente) {
+    @Override
+    public void setGerente(IManager gerente) {
         this.gerente = gerente;
     }
 
-    public List<Stand> getStands() {
+    @Override
+    public List<IStand> getStands() {
         return stands;
     }
 
-    public void setStands(List<Stand> stands) {
+    @Override
+    public void setStands(List<IStand> stands) {
         this.stands = stands;
     }
 
-    public List<Book> getLibros() {
+    @Override
+    public List<IBook> getLibros() {
         return libros;
     }
 
-    public void setLibros(List<Book> libros) {
+    @Override
+    public void setLibros(List<IBook> libros) {
         this.libros = libros;
     }
 
-    public Publisher copiar() {
+    @Override
+    public IPublisher copiar() {
         Publisher copia = new Publisher(this.nit, this.nombre, this.direccion, null);
-        
+
         // Copiar gerente
         if (this.gerente != null) {
-            Manager gerenteCopia = new Manager(
-                this.gerente.getId(), 
-                this.gerente.getNombres(), 
-                this.gerente.getApellidos()
-            );
+            IManager gerenteCopia = new Manager(
+                    this.gerente.getId(),
+                    this.gerente.getNombres(),
+                    this.gerente.getApellidos());
             copia.setGerente(gerenteCopia);
         }
-        
+
         // Copiar stands (solo datos básicos, SIN editoriales para evitar ciclo)
-        List<Stand> copiasStands = new ArrayList<>();
+        List<IStand> copiasStands = new ArrayList<>();
         if (this.stands != null) {
-            for (Stand stand : this.stands) {
-                Stand copiaStand = new Stand(stand.getId(), stand.getPrecio());
+            for (IStand stand : this.stands) {
+                IStand copiaStand = new Stand(stand.getId(), stand.getPrecio());
                 // NO copiar las editoriales del stand (evita el ciclo)
                 copiasStands.add(copiaStand);
             }
         }
         copia.setStands(copiasStands);
-        
+
         // Copiar libros (ya está bien implementado)
-        List<Book> copiasLibros = new ArrayList<>();
+        List<IBook> copiasLibros = new ArrayList<>();
         if (this.libros != null) {
-            for (Book libro : this.libros) {
+            for (IBook libro : this.libros) {
                 copiasLibros.add(libro.copiar());
             }
         }
         copia.setLibros(copiasLibros);
-        
+
         return copia;
     }
 }
